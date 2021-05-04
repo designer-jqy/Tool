@@ -33,6 +33,33 @@ git config --global user.email ""
 
 ![](Photo\Git_statu.jpg)
 
+## Git设置http代理
+
+### 临时代理
+
+```shell
+$ export http_proxy="http://127.0.0.1:12333"
+$ export https_proxy="http://127.0.0.1:12333"
+```
+
+### 永久代理
+
+```shell
+$ git config --global http.proxy http://127.0.0.1:12333
+$ git config --global https.proxy http://127.0.0.1:12333
+```
+
+这种方法相当于在.gitconfig文件中写入：
+
+```shell
+[http]
+	proxy = http://127.0.0.1:12333
+[https]
+	proxy = http://127.0.0.1:12333
+```
+
+转载：https://www.cnblogs.com/liuzhenbo/p/12299155.html
+
 ## Git使用
 
 有些时候，在必须把某些文件放到 Git 工作目录中，但又不能提交它们时，比如保存了数据库密码的配置文件等等。我们就需要在工作目录下创建一个`.gitignore`文件，然后把要忽略的文件名填进去，这样 Git 就会自动忽略这些文件了。
