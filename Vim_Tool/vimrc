@@ -1,0 +1,109 @@
+"进行版权声明的设置
+"添加或更新头
+autocmd BufNewFile *.cpp,*.c,*.h exec ":call TitleComment()"
+"map <F5> :call TitleComment()<cr>'s
+"add comment for C
+function AddTitleForC()
+    call append(0,"/*--------------------------------------------------------")
+    call append(1,"* Author             :Jiaq.yang")
+    call append(2,"* Email              :thinklook1@outlook.com")
+    call append(3,"* Create time        :".strftime("%Y-%m-%d %H:%M"))
+    call append(4,"* Last modified      :".strftime("%Y-%m-%d %H:%M"))
+    call append(5,"* Filename           :".expand("%:t"))
+    call append(6,"* Description        :")
+    call append(7,"----------------------------------------------------------*/")
+	call append(8,"#include <stdio.h>")
+    echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
+endf
+function AddTitleForCpp()
+    call append(0,"/*--------------------------------------------------------")
+    call append(1,"* Author             :Jiaq.yang")
+    call append(2,"* Email              :thinklook1@outlook.com")
+    call append(3,"* Create time        :".strftime("%Y-%m-%d %H:%M"))
+    call append(4,"* Last modified      :".strftime("%Y-%m-%d %H:%M"))
+    call append(5,"* Filename           :".expand("%:t"))
+    call append(6,"* Description        :")
+    call append(7,"----------------------------------------------------------*/")
+	call append(8,"#include <iostream>")
+	call append(9,"using namespace std;")
+    echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
+endf
+function AddTitleForh()
+	let basename = expand("%:t:r")
+	let includeGuard = '_'.toupper(basename).'_H_'
+    call append(0,"/*--------------------------------------------------------")
+    call append(1,"* Author             :Jiaq.yang")
+    call append(2,"* Email              :thinklook1@outlook.com")
+    call append(3,"* Create time        :".strftime("%Y-%m-%d %H:%M"))
+    call append(4,"* Last modified      :".strftime("%Y-%m-%d %H:%M"))
+    call append(5,"* Filename           :".expand("%:t"))
+    call append(6,"* Description        :")
+    call append(7,"----------------------------------------------------------*/")
+	call append(8, "#ifndef ".includeGuard)
+	call append(9, "#define ".includeGuard)
+	call append(10,"")
+	call append(11,"#endif ")
+    echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
+endf
+"更新最近修改时间和文件名
+function UpdateTitle()
+    normal m'
+    execute '/# *Last modified:/s@:.*$@\=strftime(":\t%Y-%m-%d %H:%M")@'
+    normal ''
+    normal mk
+    execute '/# *Filename:/s@:.*$@\=":\t\t".expand("%:t")@'
+    execute "noh"
+    normal 'k
+    echohl WarningMsg | echo "Successful in updating the copyright." | echohl None
+endfunction
+"判断前10行代码里面，是否有Last modified这个单词，
+"如果没有的话，代表没有添加过作者信息，需要新添加；
+"如果有的话，那么只需要更新即可
+function TitleComment()
+    let n=1
+    "默认为添加
+    while n < 10
+        let line = getline(n)
+        if line =~ '^\#\s*\S*Last\smodified:\S*.*$'
+            call UpdateTitle()
+            return
+        endif
+        let n = n + 1
+    endwhile
+"	if &filetype == 'c' 
+"		call AddTitleForC()
+"	elseif &filetype == 'cpp'
+"		call AddTitleForCpp()
+"	endif
+	if expand("%:e") == 'h'
+		call AddTitleForh()
+	elseif expand("%:e") == 'cpp'
+		call AddTitleForCpp()
+	elseif expand("%:e") == 'c'
+	    call AddTitleForC()
+	endif
+endfunction
+"自动补全
+:inoremap ( ()<ESC>i
+":inoremap ) <c-r>=ClosePair(')')<CR>
+:inoremap { {<CR>}<ESC>O
+":inoremap } <c-r>=ClosePair('}')<CR>
+:inoremap [ []<ESC>i
+":inoremap ] <c-r>=ClosePair(']')<CR>
+:inoremap " ""<ESC>i
+:inoremap ' ''<ESC>i
+
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set number
+set helplang=cn
+set smartindent
+set wildmenu
+set showcmd
+set wrap
+set completeopt=preview,menu
+set autowrite
+"打开文件类型检测, 加了这句才可以用智能补全
+set completeopt=longest,menu
+set syntax=on
